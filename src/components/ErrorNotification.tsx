@@ -5,9 +5,9 @@ interface Props {
   setErrorMessage: (message: string) => void;
 }
 
-export const ErrorNotification: React.FC<Props> = memo(({ 
-  errorMessage, 
-  setErrorMessage 
+const ErrorNotification: React.FC<Props> = ({
+  errorMessage,
+  setErrorMessage,
 }) => {
   return (
     <div
@@ -25,4 +25,6 @@ export const ErrorNotification: React.FC<Props> = memo(({
       {errorMessage}
     </div>
   );
-});
+};
+
+export const Error = memo(ErrorNotification);

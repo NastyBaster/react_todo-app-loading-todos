@@ -15,7 +15,6 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
           className="todo__status"
           checked={todo.completed}
           readOnly
-          // aria-label замінює необхідність зв'язку через id/htmlFor
           aria-label="Toggle todo status"
         />
       </label>

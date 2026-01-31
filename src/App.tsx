@@ -4,13 +4,16 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { USER_ID, getTodos } from './api/todos';
 import { Todo } from './types/Todo';
 import { TodoList, Footer, Header, Error, UserWarning } from './components';
+import { getVisibleTodos } from './utils/getVisibleTodos';
+import { FilterState } from './types/FilterState';
+import { ErrorMessage } from './types/ErrorMassage';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState<FilterState>(FilterState.All);
 
-  const activeTodosCount = () => todos.filter(todo => !todo.completed).length;
+  const getActiveTodos = () => todos.filter(todo => !todo.completed).length;
 
   const hasCompleted = () => todos.some(todo => todo.completed);
 
@@ -23,22 +26,13 @@ export const App: React.FC = () => {
     setErrorMessage('');
     getTodos()
       .then(setTodos)
-      .catch(() => showError('Unable to load todos'));
+      .catch(() => showError(ErrorMessage.Load));
   }, []);
 
-  const visibleTodos = useMemo(() => {
-    return todos.filter(todo => {
-      if (filter === 'active') {
-        return !todo.completed;
-      }
-
-      if (filter === 'completed') {
-        return todo.completed;
-      }
-
-      return true;
-    });
-  }, [todos, filter]);
+  const visibleTodos = useMemo(
+    () => getVisibleTodos(todos, filter), 
+    [todos, filter]
+  );
 
   if (!USER_ID) {
     return <UserWarning />;
@@ -55,7 +49,7 @@ export const App: React.FC = () => {
 
         {todos.length > 0 && (
           <Footer
-            activeTodosCount={activeTodosCount()}
+            activeTodosCount={getActiveTodos()}
             filter={filter}
             setFilter={setFilter}
             hasCompleted={hasCompleted()}
